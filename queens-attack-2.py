@@ -6,37 +6,77 @@ import sys
 
 # Complete the queensAttack function below.
 def queensAttack(n, k, r_q, c_q, obstacles):
-    att_fields = 0
+    att_fields_r_plus = 10000
+    att_fields_r_minus = 10000
+    att_fields_c_plus = 10000
+    att_fields_c_minus = 10000
+    att_fields_diagonal_r_minus_c_minus = 10000
+    att_fields_diagonal_r_minus_c_plus = 10000
+    att_fields_diagonal_r_plus_c_minus = 10000
+    att_fields_diagonal_r_plus_c_plus = 10000
     for obsticle in obstacles:
         r_o = obsticle[0]
         c_o = obsticle[1]
 
         if r_o == r_q:
-            if c_o < c_q:
-                att_fields += (c_q - c_o) - 1
-                # att_fields += (n - c_q)
-                # TODO: nije uzeto u obzir da prepreka moze da se nalazi sa obe strane
-            elif c_o > c_q:
-                att_fields += (c_o - c_q) - 1
-                # att_fields += c_q - 1
-                # TODO: nije uzeto u obzir da prepreka moze da se nalazi sa obe strane
+            if c_q > c_o:
+                att_fields_c_minus = min(att_fields_c_minus, abs(c_q - c_o) - 1)
+            elif c_q < c_o:
+                att_fields_c_plus = min(att_fields_c_plus, abs(c_q - c_o) - 1)
         elif c_o == c_q:
-            if r_o < r_q:
-                att_fields += (r_q - r_o) - 1
-                # att_fields += (n - r_q)
-                # TODO: nije uzeto u obzir da prepreka moze da se nalazi sa obe strane
-            elif r_o > r_q:
-                att_fields += (r_o - r_q) - 1
-                # att_fields += r_q - 1
-                # TODO: nije uzeto u obzir da prepreka moze da se nalazi sa obe strane
+            if r_q > r_o:
+                att_fields_r_minus = min(att_fields_r_minus, abs(r_q - r_o) - 1)
+            elif r_q < r_o:
+                att_fields_r_plus = min(att_fields_r_plus, abs(r_q - r_o) - 1)
         elif abs(r_q - r_o) == abs(c_q - c_o):
-                att_fields += abs(r_q - r_o) - 1
-                # TODO: nije uzeto u obzir da prepreka NE postoji
-        # else:
+            if r_q > r_o and c_q > c_o:
+                att_fields_diagonal_r_minus_c_minus = min(att_fields_diagonal_r_minus_c_minus, abs(r_q - r_o) - 1)
+            if r_q > r_o and c_q < c_o:
+                att_fields_diagonal_r_minus_c_plus = min(att_fields_diagonal_r_minus_c_plus, abs(r_q - r_o) - 1)
+            if r_q < r_o and c_q > c_o:
+                att_fields_diagonal_r_plus_c_minus = min(att_fields_diagonal_r_plus_c_minus, abs(r_q - r_o) - 1)
+            if r_q < r_o and c_q < c_o:
+                att_fields_diagonal_r_plus_c_plus = min(att_fields_diagonal_r_plus_c_plus, abs(r_q - r_o) - 1)
 
+    # Provera ukoliko prepreka ne postoji
+    if att_fields_r_plus == 10000:
+        att_fields_r_plus = n - r_q
+    if att_fields_r_minus == 10000:
+        att_fields_r_minus = r_q - 1
+    if att_fields_c_plus == 10000:
+        att_fields_c_plus = n - c_q
+    if att_fields_c_minus == 10000:
+        att_fields_c_minus = c_q - 1
+    if att_fields_diagonal_r_minus_c_minus == 10000:
+        if c_q > r_q:
+            att_fields_diagonal_r_minus_c_minus = r_q - 1
+        elif c_q < r_q:
+            att_fields_diagonal_r_minus_c_minus = c_q - 1
+        elif c_q == r_q:
+            att_fields_diagonal_r_minus_c_minus = c_q - 1
+    if att_fields_diagonal_r_minus_c_plus == 10000:
+        if n - c_q > r_q - 1:
+            att_fields_diagonal_r_minus_c_plus = r_q - 1
+        elif n - c_q < r_q - 1:
+            att_fields_diagonal_r_minus_c_plus = n - c_q
+        elif n - c_q == r_q - 1:
+            att_fields_diagonal_r_minus_c_plus = n - c_q
+    if att_fields_diagonal_r_plus_c_minus == 10000:
+        if n - r_q > c_q - 1:
+            att_fields_diagonal_r_plus_c_minus = c_q - 1
+        elif n - r_q < c_q - 1:
+            att_fields_diagonal_r_plus_c_minus = n - r_q
+        elif n - r_q == c_q - 1:
+            att_fields_diagonal_r_plus_c_minus = n - r_q
+    if att_fields_diagonal_r_plus_c_plus == 10000:
+        if c_q > r_q:
+            att_fields_diagonal_r_plus_c_plus = n - c_q
+        elif c_q < r_q:
+            att_fields_diagonal_r_plus_c_plus = n - r_q
+        elif c_q == r_q:
+            att_fields_diagonal_r_plus_c_plus = n - r_q
 
-
-    return att_fields
+    return att_fields_r_plus + att_fields_r_minus + att_fields_c_plus + att_fields_c_minus + att_fields_diagonal_r_minus_c_minus + att_fields_diagonal_r_minus_c_plus + att_fields_diagonal_r_plus_c_minus + att_fields_diagonal_r_plus_c_plus
 
 
 if __name__ == '__main__':
